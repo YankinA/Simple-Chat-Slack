@@ -1,32 +1,52 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Channels from './Channels';
-import Chat from './Chat';
+import faker from 'faker';
+import cookies from 'js-cookie';
+import { Provider } from 'react-redux';
+import {
+  compose,
+  applyMiddleware,
+  createStore,
+} from 'redux';
+import thunk from 'redux-thunk';
+import App from './App';
+import reducers from '../reducers';
+import { loadMessages } from '../actions';
+
+const getName = () => {
+  if (cookies.get('name') === undefined) {
+    cookies.set('name', faker.name.findName(), { expires: 1 });
+  }
+  return cookies.get('name');
+};
+
+export const Context = React.createContext();
 
 export default (gon) => {
-  class App extends React.Component {
-    state = {
-      channels: [],
-    }
+  const initialState = {
+    channels: gon.channels,
+    currentChannelId: gon.currentChannelId,
+    messages: gon.messages,
+  };
 
-    componentWillMount() {
-      this.setState({ channels: gon.channels });
-      this.setState({ messages: gon.messages });
-    }
+  /* eslint-disable no-underscore-dangle */
+  const reduxDevtools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  /* eslint-enable */
+  const store = createStore(
+    reducers,
+    initialState,
+    reduxDevtools(
+      applyMiddleware(thunk),
+    ),
+  );
+  store.dispatch(loadMessages());
 
-    render() {
-      const { channels, messages } = this.state;
-      return (
-        <React.Fragment>
-          <nav className="col-3">
-            User: Vasy Petin
-            <Channels channels={channels} />
-          </nav>
-          <Chat messages={messages} />
-        </React.Fragment>
-      );
-    }
-  }
-
-  render(<App gon={gon} />, document.querySelector('.container'));
+  const nameUser = getName();
+  render(
+    <Provider store={store}>
+      <Context.Provider value={{ name: nameUser }}>
+        <App />
+      </Context.Provider>
+    </Provider>, document.querySelector('.container-fluid'),
+  );
 };
