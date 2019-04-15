@@ -6,6 +6,7 @@ import SendMessageForm from './SendMessageForm';
 const mapStateToProps = (state) => {
   const props = {
     messages: state.messages,
+    currentChannelId: state.currentChannelId,
   };
   return props;
 };
@@ -14,25 +15,34 @@ class Chat extends React.Component {
    method = () => {}
 
    render() {
-     const { messages } = this.props;
+     const { messages, currentChannelId } = this.props;
      return (
        <Context.Consumer>
          {({ name }) => (
-           <div className="chat col-10">
-             <div clasname="chat-messages">
-               {messages.map(({ message, id }) => (
-                 <div key={id} className="chat-message mt-3">
-                   {message.user}
-                   <br />
-                   <p className="message-text">{message.text}</p>
-                 </div>
-               ))
-                 }
-               <div className="page-fixer" />
+           <React.Fragment>
+             <div className="page-fixer m-4 p-4" />
+             <div className="chat col-6 offset-2 mt-4 mb-5 p-4">
+               <div clasname="chat-messages border border-warning">
+                 {messages.map(({ message, id, channelId }) => {
+                   if (channelId === currentChannelId) {
+                     return (
+                       <div key={id} className="chat-message mt-3">
+                         {message.user}
+                         <br />
+                         <p className="message-text text-justify overflow-hidden">{message.text}</p>
+                       </div>
+                     );
+                   }
+                   return null;
+                 })
+                   }
+               </div>
              </div>
-             <div className="test" />
-             <SendMessageForm name={name} />
-           </div>
+             <div className="page-fixer m-5 p-5" />
+             <div className="fixed-bottom offset-2 col-7">
+               <SendMessageForm name={name} />
+             </div>
+           </React.Fragment>
          )
        }
        </Context.Consumer>

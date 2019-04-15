@@ -11,7 +11,13 @@ import {
 import thunk from 'redux-thunk';
 import App from './App';
 import reducers from '../reducers';
-import { loadMessages } from '../actions';
+import {
+  loadMessages,
+  loadChannels,
+  changeChannel,
+  renameChannelSocket,
+  removeChannelSocket,
+} from '../actions';
 
 const getName = () => {
   if (cookies.get('name') === undefined) {
@@ -40,6 +46,10 @@ export default (gon) => {
     ),
   );
   store.dispatch(loadMessages());
+  store.dispatch(loadChannels());
+  store.dispatch(changeChannel());
+  store.dispatch(renameChannelSocket());
+  store.dispatch(removeChannelSocket());
 
   const nameUser = getName();
   render(

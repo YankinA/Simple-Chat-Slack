@@ -1,4 +1,5 @@
 import React from 'react';
+import { Badge } from 'react-bootstrap';
 import Channels from './Channels';
 import Chat from './Chat';
 import { Context } from './index';
@@ -11,9 +12,12 @@ class App extends React.Component {
       <Context.Consumer>
         {({ name }) => (
           <React.Fragment>
-            <div className=".nav-chat-wrapper col-2">
-              <nav className="nav-chat">
-                <p>{name}</p>
+            <div className="nav-chat-wrapper col-2 position-fixed h-100 shadow">
+              <nav className="nav-chat pt-2 ">
+                <p className="nav-user-name mt-4">
+                  {`${name} `}
+                  <Badge variant="success">online</Badge>
+                </p>
                 <Channels />
               </nav>
             </div>

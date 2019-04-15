@@ -28,9 +28,9 @@ class SendMessageForm extends React.Component {
       currentChannelId,
     } = this.props;
     reset();
-    window.scrollTo(0, 10000);
     try {
       await addMessage({ value: values.text, username: name, channelId: currentChannelId });
+      window.scrollTo(0, 10000);
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
     }
@@ -40,12 +40,15 @@ class SendMessageForm extends React.Component {
     const { handleSubmit, submitting } = this.props;
     return (
       <form className="form-send-message" onSubmit={handleSubmit(this.sendMessage)}>
-        <div className="input-group mt-4">
+        <div className="input-group">
           <Field
             disabled={submitting}
+            required
+            maxlength="150"
             autoFocus
             name="text"
-            component="input"
+            component="textarea"
+            rows="3"
             type="text"
             className="form-control border-secondary border-right-0"
             placeholder="Type your message here..."
@@ -56,8 +59,8 @@ class SendMessageForm extends React.Component {
     );
   }
 }
-const ConnectedSendMessageForm = connect(mapStateToProps, actionCreators)(SendMessageForm);
+const connectedSendMessageForm = connect(mapStateToProps, actionCreators)(SendMessageForm);
 
 export default reduxForm({
   form: 'SendMessage',
-})(ConnectedSendMessageForm);
+})(connectedSendMessageForm);

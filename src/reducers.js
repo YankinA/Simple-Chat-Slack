@@ -15,26 +15,56 @@ const loadMessagesState = handleActions({
   },
 }, 'none');
 
+const loadChannelsState = handleActions({
+  [actions.loadChannelsRequest]() {
+    return 'requested';
+  },
+  [actions.loadChannelsFailure]() {
+    return 'failed';
+  },
+  [actions.loadChannelsSuccess]() {
+    return 'finiched';
+  },
+}, 'none');
+
 const messages = handleActions({
   [actions.loadMessagesSuccess](state, { payload }) {
     return [...state, payload.message];
   },
-  [actions.addMessageSuccess]() {
+  [actions.removeChannelSuccessSocket](state, { payload }) {
+    const { id } = payload;
+    return state.filter(m => m.channelId !== id);
   },
 }, 'none');
 
 const channels = handleActions({
-  [actions.addChannelsSuccess]() {
+  [actions.loadChannelsSuccess](state, { payload }) {
+    return [...state, payload.channel];
+  },
+  [actions.renameChannelSuccessSocket](state, { payload }) {
+    const { id, name } = payload.channel;
+    return state.map((channel) => {
+      if (channel.id === id) {
+        return { ...channel, name };
+      }
+      return channel;
+    });
+  },
+  [actions.removeChannelSuccessSocket](state, { payload }) {
+    const { id } = payload;
+    return state.filter(c => c.id !== id);
   },
 }, 'none');
 
 const currentChannelId = handleActions({
-  [actions.currentChannelIdSuccess]() {
+  [actions.changeChannelAction](state, { payload }) {
+    return payload.id || 1;
   },
 }, 'none');
 
 export default combineReducers({
   loadMessagesState,
+  loadChannelsState,
   messages,
   channels,
   currentChannelId,

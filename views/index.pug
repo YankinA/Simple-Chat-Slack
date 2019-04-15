@@ -5,14 +5,11 @@ html(lang="en")
     script.
       var gon = !{JSON.stringify(gon)};
   body
-    nav.navbar.navbar-expand-lg.navbar-light.bg-faded
-      a.navbar-brand(href="/") SuperChat
+    nav.navbar.navbar-expand-lg.navbar-light.bg-faded.bg-light.position-fixed.fixed-top.shadow-sm
+      a.shadow-sm.col-2.navbar-brand(href="/") SuperChat&reg;
       button.navbar-toggler(data-toggle="collapse" data-target="#navbarSupportedContent")
         span.navbar-toggler-icon
-      .collapse.navbar-collapse
-        ul.navbar-nav.mr-auto
-          li.nav-item.active
-            a.nav-link(href="/") Home
+      .collapse.navbar-collapse 
     .container-fluid.row
       #chat
       // block content
