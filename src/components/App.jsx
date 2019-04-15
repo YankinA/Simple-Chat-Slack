@@ -13,8 +13,8 @@ class App extends React.Component {
         {({ name }) => (
           <React.Fragment>
             <div className="nav-chat-wrapper col-2 position-fixed h-100 shadow">
-              <nav className="nav-chat pt-2 ">
-                <p className="nav-user-name mt-4">
+              <nav className="nav-chat pt-5 ">
+                <p className="nav-user-name mt-5 mb-4">
                   {`${name} `}
                   <Badge variant="success">online</Badge>
                 </p>
