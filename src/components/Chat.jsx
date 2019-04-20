@@ -35,18 +35,20 @@ class Chat extends React.Component {
             <div className="page-fixer m-4 p-4" />
             <div className="chat col-6 offset-2 mt-4 mb-5 p-4">
               <div clasname="chat-messages border border-warning">
-                {Object.values(messages.byId).map(({ message, id, channelId }) => {
-                  if (channelId === currentChannelId) {
-                    return (
-                      <div key={id} className="chat-message mt-3">
-                        <span className="text-muted">{message.user}</span>
-                        <br />
-                        <p className="message-text text-justify overflow-hidden">{message.text}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                })
+                {!messages.byId || Object.values(messages.byId).map(
+                  ({ message, id, channelId }) => {
+                    if (channelId === currentChannelId) {
+                      return (
+                        <div key={id} className="chat-message mt-3">
+                          <span className="text-muted">{message.user}</span>
+                          <br />
+                          <p className="message-text text-justify overflow-hidden">{message.text}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  },
+                )
                  }
                 <div ref={this.messagesEnd} />
               </div>
