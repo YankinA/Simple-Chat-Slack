@@ -1,12 +1,4 @@
-/* import { connect } from 'react-redux';
+import { connect } from 'react-redux';
+import * as actionCreators from './actions';
 
-const mapStateToProps = state => {
-  const props = {
-    messages: state.messages,
-  }
-  return props;
-};
-
-export default connect(mapStateToProps)(App);
-
-*/
+export default mapStateToProps => Component => connect(mapStateToProps, actionCreators)(Component);

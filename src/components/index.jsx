@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import faker from 'faker';
 import cookies from 'js-cookie';
+import io from 'socket.io-client';
 import { Provider } from 'react-redux';
 import {
   compose,
@@ -9,15 +10,10 @@ import {
   createStore,
 } from 'redux';
 import thunk from 'redux-thunk';
+import { normalize, schema } from 'normalizr';
 import App from './App';
 import reducers from '../reducers';
-import {
-  loadMessages,
-  loadChannels,
-  changeChannel,
-  renameChannelSocket,
-  removeChannelSocket,
-} from '../actions';
+import * as actions from '../actions';
 
 const getName = () => {
   if (cookies.get('name') === undefined) {
@@ -29,10 +25,25 @@ const getName = () => {
 export const Context = React.createContext();
 
 export default (gon) => {
+  const channel = new schema.Entity('channels');
+  const message = new schema.Entity('messages');
+  const modifiedState = {
+    channels: [channel],
+    messages: [message],
+  };
+
+  const normalizeState = normalize(gon, modifiedState);
+
   const initialState = {
-    channels: gon.channels,
+    channels: {
+      byId: normalizeState.entities.channels,
+      allId: normalizeState.result.messages,
+    },
     currentChannelId: gon.currentChannelId,
-    messages: gon.messages,
+    messages: {
+      byId: normalizeState.entities.messages,
+      allId: normalizeState.result.messages,
+    },
   };
 
   /* eslint-disable no-underscore-dangle */
@@ -45,12 +56,40 @@ export default (gon) => {
       applyMiddleware(thunk),
     ),
   );
-  store.dispatch(loadMessages());
-  store.dispatch(loadChannels());
-  store.dispatch(changeChannel());
-  store.dispatch(renameChannelSocket());
-  store.dispatch(removeChannelSocket());
 
+  const socket = io.connect('/');
+  socket.on('newMessage', (response) => {
+    const newMessage = {
+      id: response.data.attributes.id,
+      message: {
+        text: response.data.attributes.message.text,
+        user: response.data.attributes.message.user,
+      },
+      channelId: response.data.attributes.channelId,
+    };
+    store.dispatch(actions.messageLoadingSocket({ message: newMessage }));
+  });
+  socket.on('newChannel', (response) => {
+    const newChannel = {
+      id: response.data.id,
+      name: response.data.attributes.name,
+      removable: response.data.attributes.removable,
+    };
+    store.dispatch(actions.channelLoadingSocket({ channel: newChannel }));
+  });
+  socket.on('renameChannel', (response) => {
+    const newNameChannel = {
+      id: response.data.id,
+      name: response.data.attributes.name,
+    };
+    store.dispatch(actions.renameChannelSuccessSocket({ channel: newNameChannel }));
+  });
+  socket.on('removeChannel', (response) => {
+    const { id } = response.data;
+    store.dispatch(actions.removeChannelSuccessSocket({ id }));
+  });
+
+  store.dispatch(actions.changeChannel());
   const nameUser = getName();
   render(
     <Provider store={store}>

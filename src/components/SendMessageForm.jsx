@@ -16,10 +16,6 @@ const mapStateToProps = (state) => {
 };
 
 class SendMessageForm extends React.Component {
-  componentDidMount() {
-    window.scrollTo(0, 10000);
-  }
-
   sendMessage = async (values) => {
     const {
       addMessage,
@@ -27,10 +23,9 @@ class SendMessageForm extends React.Component {
       name,
       currentChannelId,
     } = this.props;
-    reset();
     try {
       await addMessage({ value: values.text, username: name, channelId: currentChannelId });
-      window.scrollTo(0, 10000);
+      reset();
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
     }
@@ -44,16 +39,23 @@ class SendMessageForm extends React.Component {
           <Field
             disabled={submitting}
             required
-            maxlength="150"
+            maxLength="150"
             autoFocus
             name="text"
             component="textarea"
             rows="3"
             type="text"
-            className="form-control border-secondary border-right-0"
+            className="form-control border-info border-right-0 shadow-lg"
             placeholder="Type your message here..."
           />
-          <button disabled={submitting} type="submit" className="btn btn-outline-secondary rounded-0" id="btn-chat">Send</button>
+          <button
+            disabled={submitting}
+            type="submit"
+            className="btn btn-outline-info rounded-0 shadow"
+            id="btn-chat"
+          >
+            Send
+          </button>
         </div>
       </form>
     );

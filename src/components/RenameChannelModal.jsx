@@ -2,12 +2,7 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import 'babel-polyfill';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
-
-const actionCreators = {
-  renameChannel: actions.renameChannel,
-};
+import connect from '../connect';
 
 const mapStateToProps = (state) => {
   const props = {
@@ -15,16 +10,18 @@ const mapStateToProps = (state) => {
   };
   return props;
 };
-
+ @connect(mapStateToProps)
 class RenameChannelModal extends React.Component {
   renameChannel = id => async (values) => {
     const {
+      reset,
       renameChannel,
       toggleModalRename,
     } = this.props;
-    toggleModalRename();
     try {
       await renameChannel({ value: values.text, id });
+      reset();
+      toggleModalRename();
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
     }
@@ -32,13 +29,13 @@ class RenameChannelModal extends React.Component {
 
   render() {
     const {
-      showModal,
+      modalType,
       toggleModalRename,
       submitting,
       handleSubmit,
       id,
     } = this.props;
-
+    const showModal = modalType === 'rename' || false;
     return (
       <Modal show={showModal} onHide={toggleModalRename}>
         <Modal.Header closeButton>
@@ -66,10 +63,8 @@ class RenameChannelModal extends React.Component {
       </Modal>
     );
   }
-}
-
-const connectedRenameChannelModal = connect(mapStateToProps, actionCreators)(RenameChannelModal);
+ }
 
 export default reduxForm({
   form: 'RenameChannelModal',
-})(connectedRenameChannelModal);
+})(RenameChannelModal);

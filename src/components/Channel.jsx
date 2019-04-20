@@ -1,13 +1,8 @@
 import React from 'react';
 import { Dropdown, Button, ButtonGroup } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
 import RenameChannelModal from './RenameChannelModal';
 import DeleteChannelModal from './DeleteChannelModal';
-
-const actionCreators = {
-  changeChannel: actions.changeChannel,
-};
+import connect from '../connect';
 
 const mapStateToProps = (state) => {
   const props = {
@@ -16,12 +11,11 @@ const mapStateToProps = (state) => {
   };
   return props;
 };
-@connect(mapStateToProps, actionCreators)
+@connect(mapStateToProps)
 class Channel extends React.Component {
   // UI state
   state = {
-    showModalRename: false,
-    showModalDelete: false,
+    modalType: null,
   };
 
 changeChannel = id => () => {
@@ -30,35 +24,37 @@ changeChannel = id => () => {
 };
 
   toggleModalRename = () => {
-    const { showModalRename } = this.state;
-    this.setState({ showModalRename: !showModalRename });
+    const { modalType } = this.state;
+    const modalState = modalType === 'rename' ? null : 'rename';
+    this.setState({ modalType: modalState });
   }
 
   toggleModalDelete = () => {
-    const { showModalDelete } = this.state;
-    this.setState({ showModalDelete: !showModalDelete });
+    const { modalType } = this.state;
+    const modalState = modalType === 'delete' ? null : 'delete';
+    this.setState({ modalType: modalState });
   }
 
 
   render() {
     const { channel, currentChannelId } = this.props;
-    const { showModalRename, showModalDelete } = this.state;
+    const { modalType } = this.state;
     return (
       <div className="col-12">
         <RenameChannelModal
-          showModal={showModalRename}
+          modalType={modalType}
           toggleModalRename={this.toggleModalRename}
           id={channel.id}
         />
         <DeleteChannelModal
-          showModal={showModalDelete}
+          modalType={modalType}
           toggleModalDelete={this.toggleModalDelete}
           id={channel.id}
           name={channel.name}
         />
         <Dropdown as={ButtonGroup}>
           <Dropdown.Toggle className="" split variant="" />
-          <Dropdown.Menu>
+          <Dropdown.Menu className="shadow">
             <Dropdown.Item as="button" onClick={this.toggleModalRename}>Rename</Dropdown.Item>
             {channel.removable ? (
               <React.Fragment>

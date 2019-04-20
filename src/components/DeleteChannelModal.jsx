@@ -2,12 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { reduxForm, SubmissionError } from 'redux-form';
 import 'babel-polyfill';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
-
-const actionCreators = {
-  deleteChannel: actions.deleteChannel,
-};
+import connect from '../connect';
 
 const mapStateToProps = (state) => {
   const props = {
@@ -15,16 +10,16 @@ const mapStateToProps = (state) => {
   };
   return props;
 };
-
+ @connect(mapStateToProps)
 class DeleteChannelModal extends React.Component {
   deleteChannel = id => async () => {
     const {
       deleteChannel,
       toggleModalDelete,
     } = this.props;
-    toggleModalDelete();
     try {
       await deleteChannel({ id });
+      toggleModalDelete();
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
     }
@@ -32,14 +27,14 @@ class DeleteChannelModal extends React.Component {
 
   render() {
     const {
-      showModal,
+      modalType,
       toggleModalDelete,
       submitting,
       handleSubmit,
       id,
       name,
     } = this.props;
-
+    const showModal = modalType === 'delete' || false;
     return (
       <Modal show={showModal} onHide={toggleModalDelete}>
         <Modal.Header closeButton>
@@ -59,10 +54,8 @@ class DeleteChannelModal extends React.Component {
       </Modal>
     );
   }
-}
-
-const connectedDeleteChannelModal = connect(mapStateToProps, actionCreators)(DeleteChannelModal);
+ }
 
 export default reduxForm({
   form: 'DeleteChannelModal',
-})(connectedDeleteChannelModal);
+})(DeleteChannelModal);

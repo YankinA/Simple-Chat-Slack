@@ -2,12 +2,7 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import 'babel-polyfill';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
-
-const actionCreators = {
-  addChannel: actions.addChannel,
-};
+import connect from '../connect';
 
 const mapStateToProps = (state) => {
   const props = {
@@ -15,7 +10,7 @@ const mapStateToProps = (state) => {
   };
   return props;
 };
-
+@connect(mapStateToProps)
 class AddChannelModal extends React.Component {
   addChannel = async (values) => {
     const {
@@ -23,10 +18,10 @@ class AddChannelModal extends React.Component {
       toggleModal,
       reset,
     } = this.props;
-    reset();
-    toggleModal();
     try {
       await addChannel({ value: values.text });
+      reset();
+      toggleModal();
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
     }
@@ -34,12 +29,12 @@ class AddChannelModal extends React.Component {
 
   render() {
     const {
-      showModal,
+      modalState,
       toggleModal,
       submitting,
       handleSubmit,
     } = this.props;
-
+    const showModal = modalState === 'open' || false;
     return (
       <Modal show={showModal} onHide={toggleModal}>
         <Modal.Header closeButton>
@@ -69,9 +64,6 @@ class AddChannelModal extends React.Component {
   }
 }
 
-
-const connectedAddChannelModal = connect(mapStateToProps, actionCreators)(AddChannelModal);
-
 export default reduxForm({
   form: 'AddChannelModal',
-})(connectedAddChannelModal);
+})(AddChannelModal);
