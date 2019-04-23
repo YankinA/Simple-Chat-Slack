@@ -7,6 +7,9 @@ const mapStateToProps = (state) => {
   const props = {
     messages: state.messages,
     currentChannelId: state.currentChannelId,
+    messageValues: state.messages.byId ? Object.values(state.messages.byId)
+      .filter(({ channelId }) => channelId === state.currentChannelId)
+      : [],
   };
   return props;
 };
@@ -27,7 +30,7 @@ class Chat extends React.Component {
   }
 
   render() {
-    const { messages, currentChannelId } = this.props;
+    const { messageValues } = this.props;
     return (
       <Context.Consumer>
         {({ name }) => (
@@ -35,19 +38,14 @@ class Chat extends React.Component {
             <div className="page-fixer m-4 p-4" />
             <div className="chat col-6 offset-2 mt-4 mb-5 p-4">
               <div clasname="chat-messages border border-warning">
-                {!messages.byId || Object.values(messages.byId).map(
-                  ({ message, id, channelId }) => {
-                    if (channelId === currentChannelId) {
-                      return (
-                        <div key={id} className="chat-message mt-3">
-                          <span className="text-muted">{message.user}</span>
-                          <br />
-                          <p className="message-text text-justify overflow-hidden">{message.text}</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  },
+                {messageValues.map(
+                  ({ message, id }) => (
+                    <div key={id} className="chat-message mt-3">
+                      <span className="text-muted">{message.user}</span>
+                      <br />
+                      <p className="message-text text-justify overflow-hidden">{message.text}</p>
+                    </div>
+                  ),
                 )
                  }
                 <div ref={this.messagesEnd} />

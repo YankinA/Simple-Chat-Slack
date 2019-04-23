@@ -11,15 +11,16 @@ const mapStateToProps = (state) => {
   return props;
 };
 @connect(mapStateToProps)
+@reduxForm({ form: 'AddChannelModal' })
 class AddChannelModal extends React.Component {
   addChannel = async (values) => {
     const {
-      addChannel,
+      makeAddChannel,
       toggleModal,
       reset,
     } = this.props;
     try {
-      await addChannel({ value: values.text });
+      await makeAddChannel({ value: values.text });
       reset();
       toggleModal();
     } catch (e) {
@@ -64,6 +65,4 @@ class AddChannelModal extends React.Component {
   }
 }
 
-export default reduxForm({
-  form: 'AddChannelModal',
-})(AddChannelModal);
+export default AddChannelModal;

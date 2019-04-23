@@ -15,7 +15,7 @@ class App extends React.Component {
             <div className="nav-chat-wrapper col-2 position-fixed h-100 shadow">
               <nav className="nav-chat pt-5 ">
                 <p className="nav-user-name mt-5 mb-4">
-                  {`${name} `}
+                  <span className="pr-2">{name}</span>
                   <Badge variant="info shadow">online</Badge>
                 </p>
                 <Channels />

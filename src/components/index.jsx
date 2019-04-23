@@ -67,7 +67,7 @@ export default (gon) => {
       },
       channelId: response.data.attributes.channelId,
     };
-    store.dispatch(actions.messageLoadingSocket({ message: newMessage }));
+    store.dispatch(actions.addMessage({ message: newMessage }));
   });
   socket.on('newChannel', (response) => {
     const newChannel = {
@@ -75,21 +75,21 @@ export default (gon) => {
       name: response.data.attributes.name,
       removable: response.data.attributes.removable,
     };
-    store.dispatch(actions.channelLoadingSocket({ channel: newChannel }));
+    store.dispatch(actions.addChannel({ channel: newChannel }));
   });
   socket.on('renameChannel', (response) => {
     const newNameChannel = {
       id: response.data.id,
       name: response.data.attributes.name,
     };
-    store.dispatch(actions.renameChannelSuccessSocket({ channel: newNameChannel }));
+    store.dispatch(actions.renameChannel({ channel: newNameChannel }));
   });
   socket.on('removeChannel', (response) => {
     const { id } = response.data;
-    store.dispatch(actions.removeChannelSuccessSocket({ id }));
+    store.dispatch(actions.removeChannel({ id }));
   });
 
-  store.dispatch(actions.changeChannel());
+  store.dispatch(actions.makeChangeChannel());
   const nameUser = getName();
   render(
     <Provider store={store}>

@@ -6,7 +6,7 @@ import connect from '../connect';
 
 const mapStateToProps = (state) => {
   const props = {
-    channels: state.channels,
+    channelsValue: Object.values(state.channels.byId),
     currentChannelId: state.currentChannelId,
   };
   return props;
@@ -25,17 +25,17 @@ class Channels extends React.Component {
   }
 
   render() {
-    const { channels, currentChannelId } = this.props;
+    const { channelsValue, currentChannelId } = this.props;
     const { modalAddChannel } = this.state;
     return (
       <React.Fragment>
         <AddChannelModal modalState={modalAddChannel} toggleModal={this.toggleModal} />
         <div className="channels-list row">
           <h5 className="col-12">
-            {'Channels '}
+            <span className="pr-2">Channels</span>
             <Button onClick={this.toggleModal} variant="outline-secondary font-weight-bold shadow" size="sm">+</Button>
           </h5>
-          {Object.values(channels.byId).map(channel => (
+          {channelsValue.map(channel => (
             <Channel
               key={channel.id}
               currentlId={currentChannelId}

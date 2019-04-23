@@ -11,14 +11,15 @@ const mapStateToProps = (state) => {
   return props;
 };
  @connect(mapStateToProps)
+ @reduxForm({ form: 'DeleteChannelModal' })
 class DeleteChannelModal extends React.Component {
   deleteChannel = id => async () => {
     const {
-      deleteChannel,
+      makeDeleteChannel,
       toggleModalDelete,
     } = this.props;
     try {
-      await deleteChannel({ id });
+      await makeDeleteChannel({ id });
       toggleModalDelete();
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
@@ -56,6 +57,4 @@ class DeleteChannelModal extends React.Component {
   }
  }
 
-export default reduxForm({
-  form: 'DeleteChannelModal',
-})(DeleteChannelModal);
+export default DeleteChannelModal;

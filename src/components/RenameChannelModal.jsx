@@ -11,15 +11,16 @@ const mapStateToProps = (state) => {
   return props;
 };
  @connect(mapStateToProps)
+ @reduxForm({ form: 'RenameChannelModal' })
 class RenameChannelModal extends React.Component {
   renameChannel = id => async (values) => {
     const {
       reset,
-      renameChannel,
+      makeRenameChannel,
       toggleModalRename,
     } = this.props;
     try {
-      await renameChannel({ value: values.text, id });
+      await makeRenameChannel({ value: values.text, id });
       reset();
       toggleModalRename();
     } catch (e) {
@@ -65,6 +66,4 @@ class RenameChannelModal extends React.Component {
   }
  }
 
-export default reduxForm({
-  form: 'RenameChannelModal',
-})(RenameChannelModal);
+export default RenameChannelModal;

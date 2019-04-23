@@ -1,12 +1,7 @@
 import React from 'react';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import 'babel-polyfill';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
-
-const actionCreators = {
-  addMessage: actions.addMessage,
-};
+import connect from '../connect';
 
 const mapStateToProps = (state) => {
   const props = {
@@ -15,16 +10,18 @@ const mapStateToProps = (state) => {
   return props;
 };
 
+@connect(mapStateToProps)
+@reduxForm({ form: 'SendMessage' })
 class SendMessageForm extends React.Component {
   sendMessage = async (values) => {
     const {
-      addMessage,
+      makeAddMessage,
       reset,
       name,
       currentChannelId,
     } = this.props;
     try {
-      await addMessage({ value: values.text, username: name, channelId: currentChannelId });
+      await makeAddMessage({ value: values.text, username: name, channelId: currentChannelId });
       reset();
     } catch (e) {
       throw new SubmissionError({ _error: e.message });
@@ -61,8 +58,5 @@ class SendMessageForm extends React.Component {
     );
   }
 }
-const connectedSendMessageForm = connect(mapStateToProps, actionCreators)(SendMessageForm);
 
-export default reduxForm({
-  form: 'SendMessage',
-})(connectedSendMessageForm);
+export default SendMessageForm;

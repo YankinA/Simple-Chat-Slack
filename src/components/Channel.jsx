@@ -19,8 +19,8 @@ class Channel extends React.Component {
   };
 
 changeChannel = id => () => {
-  const { changeChannel } = this.props;
-  changeChannel(id);
+  const { makeChangeChannel } = this.props;
+  makeChangeChannel(id);
 };
 
   toggleModalRename = () => {
@@ -64,7 +64,8 @@ changeChannel = id => () => {
             ) : null}
           </Dropdown.Menu>
           <Button className="" variant="" onClick={this.changeChannel(channel.id)}>
-            {channel.id === currentChannelId ? `# ${channel.name.toUpperCase()}` : `# ${channel.name}`}
+            <span className="pr-2">#</span>
+            {channel.id === currentChannelId ? channel.name.toUpperCase() : channel.name}
           </Button>
         </Dropdown>
       </div>
